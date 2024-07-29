@@ -22,7 +22,6 @@ function LoginForm() {
                 .then(response => response.json())
                 .then(response => {
                     if(response.error) {alert(response.error);return;}
-                    setLoading(false);
                     localStorage.setItem('token', response.data.token);
                     setUser(response.data.userInfo);
                     router.push("/dashboard");
@@ -30,7 +29,7 @@ function LoginForm() {
                 .catch(err => {
                     console.log(err);
                     alert(err.message);
-                });
+                }).finally(() => setLoading(false));
         } else {
             if(data.password != data.confirm_password) {
                 alert("Confirm password does not match.")
@@ -41,15 +40,13 @@ function LoginForm() {
                 .then(response => response.json())
                 .then(response => {
                     if(response.error) {alert(response.error);return;}
-                    setLoading(false);
                     setIsLogin(true);
                 })
                 .catch(err => {
                     console.log(err);
                     alert(err.message);
-                });
+                }).finally(() => setLoading(false));
         }
-        console.log(data)
     }
 
     return (

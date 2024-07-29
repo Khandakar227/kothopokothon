@@ -8,14 +8,15 @@ export function toDateTimeFormat(dateString:string) {
     return `${d}/${m}/${y} ${hh}:${mm}`;
 }
 
-export const hashKey = async (key: string) => {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(key);
+export const hashKey = async (password: string, id: string) => {
+    const token = localStorage.getItem("token");
+    const res = await fetch("/api/key", {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ password, groupId: id })
+     });
+    const data = await res.json();
 
-    const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    return hashHex;
+    return data.key;
 }
 
 export async function encryptMessage(message:string, KEY:string) {

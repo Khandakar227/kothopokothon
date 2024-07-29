@@ -1,3 +1,4 @@
+import MembersInfo from "@/components/MembersInfo";
 import Navbar from "@/components/Navbar";
 import { useSocket } from "@/hooks/useSocket";
 import { useUser } from "@/hooks/useUser";
@@ -19,6 +20,7 @@ type Chat = {
 };
 
 export default function Group() {
+  const [showMembers, setShowMembers] = useState(false);
   const buttonRef = useRef({} as HTMLButtonElement);
   const router = useRouter();
   const [group, setGroup] = useState<{
@@ -156,7 +158,7 @@ export default function Group() {
     console.log(isPassCorrect)
     if (!isPassCorrect) {alert("Password is incorrect"); return false;}
 
-    const newKey = (await hashKey(pass)).slice(0, 32);
+    const newKey = await hashKey(pass, router.query.groupId as string);
     localStorage.setItem(router.query.groupId as string, newKey);
     return true;
   };
@@ -174,8 +176,18 @@ export default function Group() {
         <div className="pt-12 px-4 min-h-full">
           {group && (
             <>
-              <h1 className="text-xl font-bold">{group?.name}</h1>
-              <p className="text-sm text-gray-600">UID: {group?.uid}</p>
+            <div className="flex justify-between items-center gap-4">
+                <div>
+                    <h1 className="text-xl font-bold">{group?.name}</h1>
+                    <p className="text-sm text-gray-600">UID: {group?.uid}</p>
+                </div>
+                <div className="group relative">
+                    <button className="text-4xl">🍔</button>
+                    <div className="group-hover:block hidden shadow p-2 rounded bg-white absolute right-0 w-44 text-sm">
+                        <button className="w-full py-2 px-4 border-b" onClick={() => setShowMembers(true)}>View Members</button>
+                    </div>
+                </div>
+            </div>
               <hr />
               <div className="min-h-screen">
                 {chats.map((chat) => (
@@ -183,11 +195,10 @@ export default function Group() {
                     className={`flex items-center ${
                       chat.userId == user?._id ? "justify-end pl-8" : "pr-8"
                     } w-full p-4`}
-                    key={chat._id}
-                  >
+                    key={chat._id}>
                     <div
                       className={`w-fit py-1 px-2 shadow rounded ${
-                        chat.userId == user?._id ? "bg-gray-400" : "bg-white"
+                        chat.userId == user?._id ? "bg-gray-300" : "bg-white"
                       }`}
                     >
                       <p
@@ -230,6 +241,11 @@ export default function Group() {
           )}
         </div>
       </div>
+      {
+        showMembers && (
+            <MembersInfo groupId={router.query.groupId as string} show={showMembers} close={() => setShowMembers(false)}/>
+        )
+      }
     </>
   );
 }

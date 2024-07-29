@@ -55,3 +55,9 @@ export const checkGroupPass = async (id:string, password:string) => {
     if(!group) throw new Error("Group does not exist");
     return checkPasswordMatch(password, group.password);
 }
+
+export const getMembers = async (id:string) => {
+    const group = await Group.findById(id).select('users').populate('users', 'name', User);
+    if(!group) throw new Error("Group does not exist");
+    return group?.users;
+}
