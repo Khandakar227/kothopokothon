@@ -49,3 +49,9 @@ export const getJoinedGroups = async (userId:string) => {
     const groups = await Group.find({users:userId}).select('-password');
     return groups;
 }
+
+export const checkGroupPass = async (id:string, password:string) => {
+    const group = await Group.findById(id).select('password');
+    if(!group) throw new Error("Group does not exist");
+    return checkPasswordMatch(password, group.password);
+}

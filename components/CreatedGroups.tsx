@@ -33,7 +33,6 @@ export default function CreatedGroups() {
                         <div className="shadow rounded-md p-4 bg-white" key={group._id}>
                             <Link href={`/group/${group._id}`} className="hover:underline font-semibold text-xl">{group.name}</Link>
                             <p>UID: {group.uid}</p>
-                            <p className="text-xs text-gray-400">{group._id}</p>
                         </div>)
                     }
                 </div>
